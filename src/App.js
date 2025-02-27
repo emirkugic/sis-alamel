@@ -37,7 +37,7 @@ function App() {
 							</RequireAuth>
 						}
 					>
-						<Route path="/" element={<Homepage />} />
+						<Route path="/test" element={<Homepage />} />
 						{/* Add more protected routes here */}
 					</Route>
 

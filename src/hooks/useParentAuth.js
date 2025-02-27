@@ -2,8 +2,11 @@ import { useState } from "react";
 import authApi from "../api/authApi";
 
 const useParentAuth = () => {
+	// Initialize token from localStorage (if exists)
+	const [token, setToken] = useState(
+		() => localStorage.getItem("parentToken") || null
+	);
 	const [parent, setParent] = useState(null);
-	const [token, setToken] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -11,9 +14,9 @@ const useParentAuth = () => {
 		try {
 			setLoading(true);
 			const data = await authApi.parentLogin(email, loginPassword);
-			// Assuming the response returns a "token" field
 			setToken(data.token);
 			setParent({ token: data.token });
+			localStorage.setItem("parentToken", data.token);
 			return data;
 		} catch (err) {
 			setError(err);
@@ -27,6 +30,7 @@ const useParentAuth = () => {
 		setParent(null);
 		setToken(null);
 		setError(null);
+		localStorage.removeItem("parentToken");
 	};
 
 	return { parent, token, loginParent, logoutParent, loading, error };
