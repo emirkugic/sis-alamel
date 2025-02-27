@@ -26,10 +26,10 @@ function App() {
 		<ParentAuthProvider>
 			<Router>
 				<Routes>
-					{/* Public route */}
+					{/* Public route for login */}
 					<Route path="/login" element={<LoginPage />} />
 
-					{/* Protected routes */}
+					{/* All other routes are protected */}
 					<Route
 						element={
 							<RequireAuth>
@@ -37,11 +37,10 @@ function App() {
 							</RequireAuth>
 						}
 					>
-						<Route path="/test" element={<Homepage />} />
-						{/* Add more protected routes here */}
+						<Route path="/" element={<Homepage />} />
 					</Route>
 
-					{/* 404 fallback */}
+					{/* Fallback 404 */}
 					<Route path="*" element={<h1>404 - Not Found</h1>} />
 				</Routes>
 			</Router>

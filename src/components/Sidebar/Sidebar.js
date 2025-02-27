@@ -16,8 +16,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SidebarButton from "../ui/SidebarButton/SidebarButton";
 import "./Sidebar.css";
 
+// Import the authentication context hook (adjust the path if needed)
+import { useParentAuthContext } from "../../contexts/ParentAuthContext";
+
 const DesktopSidebar = () => {
 	const location = useLocation();
+	const { logoutParent } = useParentAuthContext();
 	const [activeItem, setActiveItem] = useState("");
 	const [myChildren, setMyChildren] = useState(["Emir", "Ege", "Ela"]);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,6 +35,7 @@ const DesktopSidebar = () => {
 
 	const menuItems = useMemo(() => {
 		const items = [];
+		// On mobile, include the Dashboard button
 		if (isMobile) {
 			items.push({
 				title: "Dashboard",
@@ -41,14 +46,11 @@ const DesktopSidebar = () => {
 		// Common items
 		items.push({
 			title: "Children",
-			icon: faBookOpen,
+			icon: faPeopleGroup,
 			route: myChildren,
 		});
-
-		// Additional admin-only items
-
 		return items;
-	}, [isMobile]);
+	}, [isMobile, myChildren]);
 
 	useEffect(() => {
 		const activeMenuItem = menuItems.find((item) =>
@@ -69,7 +71,11 @@ const DesktopSidebar = () => {
 		}
 	};
 
-	const handleLogout = () => {};
+	const handleLogout = () => {
+		// Call logout from context and redirect to /login
+		logoutParent();
+		window.location.href = "/login";
+	};
 
 	const toggleSidebar = () => {
 		setIsSidebarOpen((prev) => !prev);
