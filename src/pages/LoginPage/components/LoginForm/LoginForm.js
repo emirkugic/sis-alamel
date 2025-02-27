@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import TextInput from "../../../../components/ui/TextInput/TextInput";
 import PrimaryButton from "../../../../components/ui/PrimaryButton/PrimaryButton";
@@ -6,23 +7,37 @@ import SecondaryButton from "../../../../components/ui/SecondaryButton/Secondary
 import "./LoginForm.css";
 
 import { logo } from "../../../../assets/";
+import { useParentAuthContext } from "../../../../contexts/ParentAuthContext";
 
 const LoginForm = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const navigate = useNavigate();
+
+	const { loginParent } = useParentAuthContext();
 
 	const handleLogin = async (e) => {
-		console.log("Login button clicked");
-		window.location.href = "/students";
+		e.preventDefault();
+		setIsLoading(true);
+		setErrorMessage("");
+		try {
+			await loginParent(email, password);
+			navigate("/students");
+		} catch (err) {
+			console.error("Login failed:", err);
+			setErrorMessage(
+				"Login failed. Please check your credentials and try again."
+			);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const handleCancel = () => {
 		setEmail("");
 		setPassword("");
-		setKeepLoggedIn(false);
 		setErrorMessage("");
 	};
 
@@ -48,15 +63,6 @@ const LoginForm = () => {
 					onChange={(e) => setPassword(e.target.value)}
 					type="password"
 				/>
-				{/* <div className="checkbox-container">
-					<input
-						type="checkbox"
-						id="keep-logged-in"
-						checked={keepLoggedIn}
-						onChange={(e) => setKeepLoggedIn(e.target.checked)}
-					/>
-					<label htmlFor="keep-logged-in">Keep me logged in</label>
-				</div> */}
 				<div className="button-group">
 					<PrimaryButton title="Login" disabled={isLoading} />
 					<SecondaryButton

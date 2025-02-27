@@ -19,9 +19,7 @@ import "./Sidebar.css";
 const DesktopSidebar = () => {
 	const location = useLocation();
 	const [activeItem, setActiveItem] = useState("");
-	const [myCourses, setMyCourses] = useState([]);
-	const [myDepartments, setMyDepartments] = useState([]);
-	const [loadingCourses, setLoadingCourses] = useState(true);
+	const [myChildren, setMyChildren] = useState(["Emir", "Ege", "Ela"]);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -31,10 +29,8 @@ const DesktopSidebar = () => {
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
-	// Build menu items conditionally
 	const menuItems = useMemo(() => {
 		const items = [];
-		// Only include the Dashboard button if we're in mobile view.
 		if (isMobile) {
 			items.push({
 				title: "Dashboard",
@@ -43,23 +39,11 @@ const DesktopSidebar = () => {
 			});
 		}
 		// Common items
-		items.push(
-			{
-				title: "Grades",
-				icon: faBook,
-				route: myCourses,
-			},
-			{
-				title: "Lectures",
-				icon: faBookOpen,
-				route: myDepartments,
-			},
-			{
-				title: "Weekly Report",
-				icon: faChartLine,
-				route: "/logs",
-			}
-		);
+		items.push({
+			title: "Children",
+			icon: faBookOpen,
+			route: myChildren,
+		});
 
 		// Additional admin-only items
 

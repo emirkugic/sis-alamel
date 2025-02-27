@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import { LoginPage, Homepage } from "./pages";
 import { Sidebar } from "./components";
+import { ParentAuthProvider } from "./contexts/ParentAuthContext";
+import RequireAuth from "./components/RequireAuth";
 
 const Layout = () => {
 	return (
@@ -21,18 +23,29 @@ const Layout = () => {
 
 function App() {
 	return (
-		<Router>
-			<Routes>
-				<Route path="/login" element={<LoginPage />} />
+		<ParentAuthProvider>
+			<Router>
+				<Routes>
+					{/* Public route */}
+					<Route path="/login" element={<LoginPage />} />
 
-				<Route element={<Layout />}>
-					<Route path="/" element={<Homepage />} />
-					{/* <Route path="/grades" element={<GradesPage />} /> */}
-				</Route>
+					{/* Protected routes */}
+					<Route
+						element={
+							<RequireAuth>
+								<Layout />
+							</RequireAuth>
+						}
+					>
+						<Route path="/" element={<Homepage />} />
+						{/* Add more protected routes here */}
+					</Route>
 
-				<Route path="*" element={<h1>404 - Not Found</h1>} />
-			</Routes>
-		</Router>
+					{/* 404 fallback */}
+					<Route path="*" element={<h1>404 - Not Found</h1>} />
+				</Routes>
+			</Router>
+		</ParentAuthProvider>
 	);
 }
 
