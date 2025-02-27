@@ -1,0 +1,103 @@
+.login-container {
+	background-color: #f9f9f9;
+	border-radius: 8px;
+	padding: 30px;
+	max-width: 400px;
+	margin: 50px auto;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	position: relative;
+}
+
+.logo {
+	display: block;
+	margin: 0 auto 20px auto;
+	max-width: 100px;
+}
+
+.notification {
+	padding: 10px;
+	margin: 10px 0;
+	border-radius: 5px;
+	color: #721c24;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
+	text-align: center;
+	font-size: 0.9rem;
+}
+
+.login-form {
+	display: flex;
+	flex-direction: column;
+}
+
+.checkbox-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 10px 0;
+	padding-left: 4px;
+}
+
+.checkbox-container input[type="checkbox"] {
+	margin: 0;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+}
+
+.checkbox-container label {
+	font-size: 0.9rem;
+	color: #333;
+	cursor: pointer;
+}
+
+.button-group {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+	gap: 10px;
+}
+
+/* Loading bar */
+.loading-bar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 4px;
+	width: 0;
+	background-color: #04abfd;
+	animation: loadingAnimation 2s infinite;
+	border-radius: 2px;
+}
+
+@keyframes loadingAnimation {
+	0% {
+		width: 0;
+		left: 0;
+	}
+	50% {
+		width: 80%;
+		left: 10%;
+	}
+	100% {
+		width: 0;
+		left: 0;
+	}
+}
+
+@media (max-width: 480px) {
+	.login-container {
+		width: 90%;
+		padding: 20px;
+	}
+
+	.button-group {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.primary-btn,
+	.secondary-btn {
+		width: 100%;
+	}
+}

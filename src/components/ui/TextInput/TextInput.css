@@ -1,0 +1,58 @@
+.form-group {
+	width: 100%;
+	margin-bottom: 16px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 16px;
+}
+
+.text-input-header {
+	display: flex;
+	align-items: center;
+	font-weight: bold;
+	font-size: 16px;
+	margin-bottom: 8px;
+}
+
+.header-icon {
+	margin-right: 8px;
+	font-size: 18px;
+	color: #343a40;
+}
+
+.text-input-container {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.text-input {
+	width: 100%;
+	padding: 8px 36px 8px 12px; /* Adjust padding for the icon */
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 16px;
+	height: 39px;
+	box-sizing: border-box;
+}
+
+.password-toggle-icon {
+	position: absolute;
+	right: 12px; /* Adjust this to align the icon horizontally */
+	top: 55%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	color: #999;
+	font-size: 18px;
+}
+
+.password-toggle-icon:hover {
+	color: #555;
+}
