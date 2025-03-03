@@ -1,0 +1,115 @@
+/* Overall container */
+.info-page {
+	max-width: 1200px;
+	margin: 2rem auto;
+	padding: 1.5rem;
+	font-family: "Segoe UI", sans-serif;
+	background-color: #f7faff;
+}
+
+/* Page title */
+.page-title {
+	text-align: center;
+	font-size: 2rem;
+	margin-bottom: 2rem;
+	color: #333;
+}
+
+/* Subjects grid: vertical stack of cards */
+.subjects-container {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+/* Subject card styling */
+.subject-card {
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+	transition: transform 0.2s ease;
+}
+
+.subject-card:hover {
+	transform: translateY(-3px);
+}
+
+/* Card header with primary color background */
+.card-header {
+	padding: 1rem;
+	color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.header-content {
+	display: flex;
+	flex-direction: column;
+}
+
+.card-title {
+	margin: 0;
+	font-size: 1.4rem;
+	font-weight: 600;
+}
+
+.summary {
+	margin-top: 0.3rem;
+	font-size: 0.95rem;
+	display: flex;
+	gap: 1rem;
+}
+
+/* Toggle button */
+.toggle-button {
+	padding: 0.5rem 1rem;
+	background-color: #fff;
+	color: #04abfd;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: background-color 0.2s;
+}
+
+.toggle-button:hover {
+	background-color: #e0f7ff;
+}
+
+/* Card body for detailed assessments */
+.card-body {
+	padding: 1rem;
+	border-top: 1px solid #eee;
+}
+
+.assessment-row {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.assessment-row:last-child {
+	border-bottom: none;
+}
+
+.assessment-title {
+	font-weight: 500;
+	color: #333;
+}
+
+.assessment-grade {
+	font-weight: 600;
+	color: #04abfd;
+}
+
+/* Total row */
+.subject-total {
+	margin-top: 1rem;
+	text-align: right;
+	font-size: 1rem;
+	font-weight: bold;
+	color: #333;
+}

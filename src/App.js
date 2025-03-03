@@ -4,17 +4,22 @@ import {
 	Routes,
 	Route,
 	Outlet,
+	useLocation,
 } from "react-router-dom";
-import { LoginPage, Homepage } from "./pages";
+import { LoginPage, Homepage, InformationPage } from "./pages";
 import { Sidebar } from "./components";
 import { ParentAuthProvider } from "./contexts/ParentAuthContext";
 import RequireAuth from "./components/RequireAuth";
+import "./App.css";
 
-const Layout = () => {
+const AppContent = () => {
+	const location = useLocation();
+	const isLoginPage = location.pathname === "/login";
+
 	return (
-		<div className="app-layout">
-			<Sidebar />
-			<div className="content">
+		<div className="App">
+			{!isLoginPage && <Sidebar />}
+			<div className={`main-content ${isLoginPage ? "no-margins" : ""}`}>
 				<Outlet />
 			</div>
 		</div>
@@ -26,21 +31,22 @@ function App() {
 		<ParentAuthProvider>
 			<Router>
 				<Routes>
-					{/* Public route for login */}
+					{/* Public route */}
 					<Route path="/login" element={<LoginPage />} />
 
-					{/* All other routes are protected */}
+					{/* Protected routes with Sidebar */}
 					<Route
 						element={
 							<RequireAuth>
-								<Layout />
+								<AppContent />
 							</RequireAuth>
 						}
 					>
 						<Route path="/" element={<Homepage />} />
+						<Route path="/student/tempId" element={<InformationPage />} />
 					</Route>
 
-					{/* Fallback 404 */}
+					{/* 404 fallback */}
 					<Route path="*" element={<h1>404 - Not Found</h1>} />
 				</Routes>
 			</Router>
