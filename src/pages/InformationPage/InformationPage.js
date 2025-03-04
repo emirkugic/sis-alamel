@@ -113,8 +113,8 @@ const InformationPage = () => {
 
 	if (loading) {
 		return (
-			<div className="loading-container">
-				<div className="loading-spinner"></div>
+			<div className="info-page-loading-container">
+				<div className="info-page-loading-spinner"></div>
 				<p>Loading student data...</p>
 			</div>
 		);
@@ -122,7 +122,7 @@ const InformationPage = () => {
 
 	if (error) {
 		return (
-			<div className="loading-container">
+			<div className="info-page-loading-container">
 				<p>Error loading student data: {error.message}</p>
 			</div>
 		);
@@ -130,7 +130,7 @@ const InformationPage = () => {
 
 	if (!studentGrades) {
 		return (
-			<div className="loading-container">
+			<div className="info-page-loading-container">
 				<p>No data found.</p>
 			</div>
 		);
@@ -138,43 +138,44 @@ const InformationPage = () => {
 
 	const { student, subjects } = studentGrades;
 	return (
-		<div className="information-page">
-			<header className="student-header">
-				<div className="header-content">
-					<div className="student-info">
-						<h1>
+		<div className="info-page-container">
+			<header className="info-page-student-header">
+				<div className="info-page-header-content">
+					<div className="info-page-student-info">
+						<h1 className="info-page-title">
 							{student.firstName} {student.lastName}
 						</h1>
-						{/* Example "student-details" - remove or adapt since no "grade/homeroom" in new route */}
-						<div className="student-details">
-							<div className="detail-item">
-								<span className="detail-label">Student ID:</span>
-								<span className="detail-value">{student.id}</span>
+						<div className="info-page-student-details">
+							<div className="info-page-detail-item">
+								<span className="info-page-detail-label">Student ID:</span>
+								<span className="info-page-detail-value">{student.id}</span>
 							</div>
-							<div className="detail-item">
-								<span className="detail-label">Department:</span>
-								<span className="detail-value">{student.departmentId}</span>
+							<div className="info-page-detail-item">
+								<span className="info-page-detail-label">Department:</span>
+								<span className="info-page-detail-value">
+									{student.departmentId}
+								</span>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div className="nav-tabs">
+				<div className="info-page-nav-tabs">
 					<button
-						className={`tab-button ${
-							activeSemester === "first" ? "active" : ""
-						} ${!hasFirstSemesterData ? "disabled" : ""}`}
+						className={`info-page-tab-button ${
+							activeSemester === "first" ? "info-page-active" : ""
+						} ${!hasFirstSemesterData ? "info-page-disabled" : ""}`}
 						onClick={() => hasFirstSemesterData && setActiveSemester("first")}
 						disabled={!hasFirstSemesterData}
 					>
 						First Semester
 						{!hasFirstSemesterData && (
-							<span className="coming-soon-badge">No Data</span>
+							<span className="info-page-coming-soon-badge">No Data</span>
 						)}
 					</button>
 					<button
-						className={`tab-button ${
-							activeSemester === "second" ? "active" : ""
+						className={`info-page-tab-button ${
+							activeSemester === "second" ? "info-page-active" : ""
 						}`}
 						onClick={() => setActiveSemester("second")}
 					>
@@ -183,7 +184,7 @@ const InformationPage = () => {
 				</div>
 			</header>
 
-			<div className="subjects-container">
+			<div className="info-page-subjects-container">
 				{subjects.map((subject) => {
 					const semesterAssessments = filterAssessmentsBySemester(
 						subject.assessments || [],
@@ -208,31 +209,36 @@ const InformationPage = () => {
 						calculateTotalPoints(semesterAssessments);
 
 					return (
-						<div className="subject-card" key={subject.subjectId}>
+						<div className="info-page-subject-card" key={subject.subjectId}>
 							<div
-								className="subject-header"
+								className="info-page-subject-header"
 								onClick={() => toggleSubject(subject.subjectId)}
 							>
-								<div className="subject-info">
-									<h3>{subject.subjectName}</h3>
-									{/* <p>{subject.description}</p> */}
+								<div className="info-page-subject-info">
+									<h3 className="info-page-subject-name">
+										{subject.subjectName}
+									</h3>
 								</div>
-								<div className="subject-grade">
+								<div className="info-page-subject-grade">
 									<div
-										className={`grade-display ${
-											isPassing(semesterAverage) ? "passing" : "failing"
+										className={`info-page-grade-display ${
+											isPassing(semesterAverage)
+												? "info-page-passing"
+												: "info-page-failing"
 										}`}
 									>
-										<span className="percentage-text">{semesterAverage}%</span>
+										<span className="info-page-percentage-text">
+											{semesterAverage}%
+										</span>
 									</div>
-									<div className="grade-details">
-										<div className="assessment-count">
+									<div className="info-page-grade-details">
+										<div className="info-page-assessment-count">
 											{semesterAssessments.length}{" "}
 											{semesterAssessments.length === 1
 												? "assessment"
 												: "assessments"}
 										</div>
-										<div className="total-points">
+										<div className="info-page-total-points">
 											{Number.isInteger(totalObtained)
 												? Math.floor(totalObtained)
 												: totalObtained.toFixed(1)}
@@ -240,29 +246,30 @@ const InformationPage = () => {
 											{Number.isInteger(totalPossible)
 												? Math.floor(totalPossible)
 												: totalPossible.toFixed(1)}{" "}
+											pts
 										</div>
 									</div>
-									<span className="expand-icon">
+									<span className="info-page-expand-icon">
 										{expandedSubjects.includes(subject.subjectId) ? "▼" : "▶"}
 									</span>
 								</div>
 							</div>
 
 							{expandedSubjects.includes(subject.subjectId) && (
-								<div className="assessments-container">
-									<div className="assessment-filters">
-										<div className="filter-section">
-											<span className="filter-title">Types:</span>
+								<div className="info-page-assessments-container">
+									<div className="info-page-assessment-filters">
+										<div className="info-page-filter-section">
+											<span className="info-page-filter-title">Types:</span>
 											{Object.entries(
 												getCategoryCounts(subject, activeSemester)
 											).map(([type, count]) => (
-												<span key={type} className="category-tag">
+												<span key={type} className="info-page-category-tag">
 													{type} ({count})
 												</span>
 											))}
 										</div>
 									</div>
-									<table className="assessments-table">
+									<table className="info-page-assessments-table">
 										<thead>
 											<tr>
 												<th>Date</th>
@@ -289,7 +296,7 @@ const InformationPage = () => {
 															<td>{formatDate(assessment.assessmentDate)}</td>
 															<td>{assessment.title}</td>
 															<td>
-																<span className="category-pill">
+																<span className="info-page-category-pill">
 																	{assessment.type || "N/A"}
 																</span>
 															</td>
@@ -297,15 +304,15 @@ const InformationPage = () => {
 																{score}/{total}
 															</td>
 															<td>
-																<div className="percentage-cell">
-																	<div className="percentage-value">
+																<div className="info-page-percentage-cell">
+																	<div className="info-page-percentage-value">
 																		{percentage}%
 																	</div>
 																	<div
-																		className={`percentage-bar ${
+																		className={`info-page-percentage-bar ${
 																			isPassing(percentage)
-																				? "passing"
-																				: "failing"
+																				? "info-page-passing"
+																				: "info-page-failing"
 																		}`}
 																		style={{
 																			width: `${(score / total) * 100}%`,
