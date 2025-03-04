@@ -145,7 +145,7 @@ const InformationPage = () => {
 						<h1 className="info-page-title">
 							{student.firstName} {student.lastName}
 						</h1>
-						<div className="info-page-student-details">
+						{/* <div className="info-page-student-details">
 							<div className="info-page-detail-item">
 								<span className="info-page-detail-label">Student ID:</span>
 								<span className="info-page-detail-value">{student.id}</span>
@@ -156,7 +156,7 @@ const InformationPage = () => {
 									{student.departmentId}
 								</span>
 							</div>
-						</div>
+						</div> */}
 					</div>
 				</div>
 
@@ -246,7 +246,7 @@ const InformationPage = () => {
 											{Number.isInteger(totalPossible)
 												? Math.floor(totalPossible)
 												: totalPossible.toFixed(1)}{" "}
-											pts
+											points
 										</div>
 									</div>
 									<span className="info-page-expand-icon">

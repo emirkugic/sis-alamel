@@ -5,9 +5,9 @@ import TextInput from "../../../../components/ui/TextInput/TextInput";
 import PrimaryButton from "../../../../components/ui/PrimaryButton/PrimaryButton";
 import SecondaryButton from "../../../../components/ui/SecondaryButton/SecondaryButton";
 import "./LoginForm.css";
-
 import { logo } from "../../../../assets/";
 import { useParentAuthContext } from "../../../../contexts/ParentAuthContext";
+import parentApi from "../../../../api/parentApi";
 
 const LoginForm = () => {
 	const [email, setEmail] = useState("");
@@ -15,16 +15,29 @@ const LoginForm = () => {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
-
 	const { loginParent } = useParentAuthContext();
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
 		setIsLoading(true);
 		setErrorMessage("");
+
 		try {
-			await loginParent(email, password);
-			navigate("/");
+			// Step 1: Login the parent
+			const authData = await loginParent(email, password);
+
+			// Step 2: Fetch children associated with the parent
+			const children = await parentApi.getChildrenByParentId(
+				authData.parentId,
+				authData.token
+			);
+
+			// Step 3: Redirect to the first child's page or home if no children
+			if (children && children.length > 0) {
+				navigate(`/student/${children[0].id}`);
+			} else {
+				navigate("/");
+			}
 		} catch (err) {
 			console.error("Login failed:", err);
 			setErrorMessage(

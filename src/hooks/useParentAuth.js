@@ -1,5 +1,4 @@
 import { jwtDecode } from "jwt-decode";
-
 import { useState } from "react";
 import authApi from "../api/authApi";
 
@@ -29,7 +28,11 @@ const useParentAuth = () => {
 
 			setParent({ token: data.token, id: userId });
 
-			return data;
+			// Return auth data for immediate use after login
+			return {
+				token: data.token,
+				parentId: userId,
+			};
 		} catch (err) {
 			setError(err);
 			throw err;
