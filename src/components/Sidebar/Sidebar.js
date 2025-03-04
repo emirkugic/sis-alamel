@@ -56,7 +56,7 @@ const DesktopSidebar = () => {
 			});
 		}
 		items.push({
-			title: "Children",
+			title: "Grades",
 			icon: faPeopleGroup,
 			route: myChildren,
 		});

@@ -24,7 +24,7 @@ const LoginForm = () => {
 		setErrorMessage("");
 		try {
 			await loginParent(email, password);
-			navigate("/test");
+			navigate("/");
 		} catch (err) {
 			console.error("Login failed:", err);
 			setErrorMessage(
