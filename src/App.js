@@ -12,6 +12,7 @@ import {
 	InformationPage,
 	NotFound,
 	AttendancePage,
+	TempHP,
 } from "./pages";
 import { Sidebar } from "./components";
 import { ParentAuthProvider } from "./contexts/ParentAuthContext";
@@ -47,7 +48,7 @@ function App() {
 							</RequireAuth>
 						}
 					>
-						{/* <Route path="/" element={<Homepage />} /> */}
+						<Route path="/" element={<TempHP />} />
 						<Route path="/student/:id" element={<InformationPage />} />
 						<Route path="/attendance/:id" element={<AttendancePage />} />
 					</Route>

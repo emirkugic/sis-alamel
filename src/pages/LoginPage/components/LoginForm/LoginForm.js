@@ -7,7 +7,6 @@ import SecondaryButton from "../../../../components/ui/SecondaryButton/Secondary
 import "./LoginForm.css";
 import { logo } from "../../../../assets/";
 import { useParentAuthContext } from "../../../../contexts/ParentAuthContext";
-import parentApi from "../../../../api/parentApi";
 
 const LoginForm = () => {
 	const [email, setEmail] = useState("");
@@ -23,21 +22,9 @@ const LoginForm = () => {
 		setErrorMessage("");
 
 		try {
-			// Step 1: Login the parent
-			const authData = await loginParent(email, password);
-
-			// Step 2: Fetch children associated with the parent
-			const children = await parentApi.getChildrenByParentId(
-				authData.parentId,
-				authData.token
-			);
-
-			// Step 3: Redirect to the first child's page or home if no children
-			if (children && children.length > 0) {
-				navigate(`/student/${children[0].id}`);
-			} else {
-				navigate("/");
-			}
+			// Just login and redirect to homepage
+			await loginParent(email, password);
+			navigate("/");
 		} catch (err) {
 			console.error("Login failed:", err);
 			setErrorMessage(
