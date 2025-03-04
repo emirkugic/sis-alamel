@@ -6,7 +6,13 @@ import {
 	Outlet,
 	useLocation,
 } from "react-router-dom";
-import { LoginPage, Homepage, InformationPage, NotFound } from "./pages";
+import {
+	LoginPage,
+	Homepage,
+	InformationPage,
+	NotFound,
+	AttendancePage,
+} from "./pages";
 import { Sidebar } from "./components";
 import { ParentAuthProvider } from "./contexts/ParentAuthContext";
 import RequireAuth from "./components/RequireAuth";
@@ -34,7 +40,6 @@ function App() {
 					{/* Public route */}
 					<Route path="/login" element={<LoginPage />} />
 
-					{/* Protected routes with Sidebar */}
 					<Route
 						element={
 							<RequireAuth>
@@ -44,6 +49,7 @@ function App() {
 					>
 						<Route path="/" element={<Homepage />} />
 						<Route path="/student/:id" element={<InformationPage />} />
+						<Route path="/attendance/:id" element={<AttendancePage />} />
 					</Route>
 
 					{/* 404 fallback */}

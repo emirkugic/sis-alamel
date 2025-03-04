@@ -113,6 +113,7 @@ const DesktopSidebar = () => {
 							isActive={activeItem === item.title}
 							onClick={() => handleButtonClick(item.title, item.route)}
 						/>
+						
 					))}
 				</div>
 				<div className="logout-container">
