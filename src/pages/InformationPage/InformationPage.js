@@ -1,52 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
+import useStudentGrades from "../../hooks/useStudentGrades";
+import { useParentAuthContext } from "../../contexts/ParentAuthContext";
+
 import "./InformationPage.css";
-import studentData from "./data.json";
 
 const InformationPage = () => {
 	const { id } = useParams(); // /student/:id
-	const [data, setData] = useState(null);
-	const [loading, setLoading] = useState(true);
+	const { token } = useParentAuthContext();
+	const { studentGrades, loading, error, fetchStudentGrades } =
+		useStudentGrades(token);
+
 	const [expandedSubjects, setExpandedSubjects] = useState([]);
 
-	// Determine current semester based on date
 	const getCurrentSemester = () => {
-		const currentDate = new Date();
-		const currentMonth = currentDate.getMonth() + 1; // getMonth() is 0-indexed
-
-		// First semester: September to December (months 9-12)
-		// Second semester: January to August (months 1-8)
+		const currentMonth = new Date().getMonth() + 1;
 		return currentMonth >= 9 && currentMonth <= 12 ? "first" : "second";
 	};
 
 	const [activeSemester, setActiveSemester] = useState(getCurrentSemester());
 	const [hasFirstSemesterData, setHasFirstSemesterData] = useState(false);
 
-	// Simulate fetching data
 	useEffect(() => {
-		// In a real application, this would be a fetch call to your API
-		setTimeout(() => {
-			setData(studentData);
+		if (token && id) {
+			fetchStudentGrades(id);
+		}
+	}, [id, token]);
 
-			// Check if there's data for the first semester
-			// In a real app, you would check if there are assessments with dates before January 1st
+	useEffect(() => {
+		if (studentGrades) {
 			const currentYear = new Date().getFullYear();
 			const newYearsDate = new Date(`${currentYear}-01-01`);
 
-			// Check if any subject has assessments before New Year's
-			const firstSemesterData = studentData.subjects.some((subject) =>
-				subject.assessments.some(
-					(assessment) => new Date(assessment.date) < newYearsDate
+			const hasFirst = studentGrades.subjects?.some((subject) =>
+				subject.assessments?.some(
+					(assessment) => new Date(assessment.assessmentDate) < newYearsDate
 				)
 			);
+			setHasFirstSemesterData(hasFirst);
+		}
+	}, [studentGrades]);
 
-			setHasFirstSemesterData(firstSemesterData);
-			setLoading(false);
-		}, 500);
-	}, []);
-
-	// Toggle function to expand/collapse a subject's assessments
 	const toggleSubject = (subjectId) => {
 		if (expandedSubjects.includes(subjectId)) {
 			setExpandedSubjects(expandedSubjects.filter((id) => id !== subjectId));
@@ -55,53 +50,46 @@ const InformationPage = () => {
 		}
 	};
 
-	// Helper function to calculate the percentage score for an assessment
 	const calculatePercentage = (score, total) => {
+		if (!total || total <= 0) return "0.0";
 		return ((score / total) * 100).toFixed(1);
 	};
 
-	// Helper function to determine if an assessment or subject is passing
 	const isPassing = (percentage) => {
-		return percentage >= 55;
+		return parseFloat(percentage) >= 55;
 	};
 
-	// Helper function to format date
 	const formatDate = (dateString) => {
 		const options = { year: "numeric", month: "short", day: "numeric" };
 		return new Date(dateString).toLocaleDateString(undefined, options);
 	};
 
-	// Filter assessments by semester
 	const filterAssessmentsBySemester = (assessments, semester) => {
 		const currentYear = new Date().getFullYear();
 		const newYearsDate = new Date(`${currentYear}-01-01`);
 
 		if (semester === "first") {
 			return assessments.filter(
-				(assessment) => new Date(assessment.date) < newYearsDate
+				(a) => new Date(a.assessmentDate) < newYearsDate
 			);
 		} else {
 			return assessments.filter(
-				(assessment) => new Date(assessment.date) >= newYearsDate
+				(a) => new Date(a.assessmentDate) >= newYearsDate
 			);
 		}
 	};
 
-	// Get category counts for a subject
 	const getCategoryCounts = (subject, semester) => {
-		const filteredAssessments = filterAssessmentsBySemester(
-			subject.assessments,
+		const filtered = filterAssessmentsBySemester(
+			subject.assessments || [],
 			semester
 		);
 		const categories = {};
-
-		filteredAssessments.forEach((assessment) => {
-			if (!categories[assessment.category]) {
-				categories[assessment.category] = 0;
-			}
-			categories[assessment.category]++;
+		filtered.forEach((assessment) => {
+			const cat = assessment.type || "Unknown";
+			if (!categories[cat]) categories[cat] = 0;
+			categories[cat]++;
 		});
-
 		return categories;
 	};
 
@@ -114,36 +102,45 @@ const InformationPage = () => {
 		);
 	}
 
+	if (error) {
+		return (
+			<div className="loading-container">
+				<p>Error loading student data: {error.message}</p>
+			</div>
+		);
+	}
+
+	if (!studentGrades) {
+		return (
+			<div className="loading-container">
+				<p>No data found.</p>
+			</div>
+		);
+	}
+
+	const { student, subjects } = studentGrades;
 	return (
 		<div className="information-page">
 			<header className="student-header">
 				<div className="header-content">
 					<div className="student-info">
-						<h1>{data.student.name}'s Academic Progress</h1>
+						<h1>
+							{student.firstName} {student.lastName}
+						</h1>
+						{/* Example "student-details" - remove or adapt since no "grade/homeroom" in new route */}
 						<div className="student-details">
 							<div className="detail-item">
-								<span className="detail-label">Grade:</span>
-								<span className="detail-value">{data.student.grade}</span>
+								<span className="detail-label">Student ID:</span>
+								<span className="detail-value">{student.id}</span>
 							</div>
 							<div className="detail-item">
-								<span className="detail-label">ID:</span>
-								<span className="detail-value">{data.student.studentId}</span>
+								<span className="detail-label">Department:</span>
+								<span className="detail-value">{student.departmentId}</span>
 							</div>
-							<div className="detail-item">
-								<span className="detail-label">Homeroom:</span>
-								<span className="detail-value">{data.student.homeroom}</span>
-							</div>
-						</div>
-						<div className="term-info">
-							<span>
-								{data.student.academicYear} • {data.student.term}
-							</span>
-							<span className="update-info">
-								Last updated: {formatDate(data.student.lastUpdated)}
-							</span>
 						</div>
 					</div>
 				</div>
+
 				<div className="nav-tabs">
 					<button
 						className={`tab-button ${
@@ -169,39 +166,35 @@ const InformationPage = () => {
 			</header>
 
 			<div className="subjects-container">
-				{data.subjects.map((subject) => {
-					// Filter assessments by active semester
+				{subjects.map((subject) => {
 					const semesterAssessments = filterAssessmentsBySemester(
-						subject.assessments,
+						subject.assessments || [],
 						activeSemester
 					);
-
-					// If no assessments for this semester, skip this subject
 					if (semesterAssessments.length === 0) return null;
 
-					// Calculate semester average for this subject
-					const semesterTotalPercentage = semesterAssessments.reduce(
-						(sum, assessment) => {
-							return sum + (assessment.score / assessment.total) * 100;
-						},
-						0
-					);
-
-					const semesterAverage = (
-						semesterTotalPercentage / semesterAssessments.length
-					).toFixed(1);
+					let sumPercent = 0;
+					semesterAssessments.forEach((a) => {
+						const score = parseFloat(a.grade) || 0;
+						const total = parseFloat(a.points) || 0;
+						if (total > 0) {
+							sumPercent += (score / total) * 100;
+						}
+					});
+					const semesterAverage = semesterAssessments.length
+						? (sumPercent / semesterAssessments.length).toFixed(1)
+						: "0.0";
 
 					return (
-						<div className="subject-card" key={subject.id}>
+						<div className="subject-card" key={subject.subjectId}>
 							<div
 								className="subject-header"
-								onClick={() => toggleSubject(subject.id)}
+								onClick={() => toggleSubject(subject.subjectId)}
 							>
 								<div className="subject-info">
-									<h3>{subject.name}</h3>
-									<p>Teacher: {subject.teacher}</p>
+									<h3>{subject.subjectName}</h3>
+									{/* <p>{subject.description}</p> */}
 								</div>
-
 								<div className="subject-grade">
 									<div
 										className={`grade-display ${
@@ -217,21 +210,21 @@ const InformationPage = () => {
 											: "assessments"}
 									</div>
 									<span className="expand-icon">
-										{expandedSubjects.includes(subject.id) ? "▼" : "▶"}
+										{expandedSubjects.includes(subject.subjectId) ? "▼" : "▶"}
 									</span>
 								</div>
 							</div>
 
-							{expandedSubjects.includes(subject.id) && (
+							{expandedSubjects.includes(subject.subjectId) && (
 								<div className="assessments-container">
 									<div className="assessment-filters">
 										<div className="filter-section">
-											<span className="filter-title">Categories:</span>
+											<span className="filter-title">Types:</span>
 											{Object.entries(
 												getCategoryCounts(subject, activeSemester)
-											).map(([category, count]) => (
-												<span key={category} className="category-tag">
-													{category} ({count})
+											).map(([type, count]) => (
+												<span key={type} className="category-tag">
+													{type} ({count})
 												</span>
 											))}
 										</div>
@@ -240,31 +233,35 @@ const InformationPage = () => {
 										<thead>
 											<tr>
 												<th>Date</th>
-												<th>Assessment</th>
-												<th>Category</th>
+												<th>Title</th>
+												<th>Type</th>
 												<th>Score</th>
 												<th>Percentage</th>
 											</tr>
 										</thead>
 										<tbody>
-											{semesterAssessments
-												.sort((a, b) => new Date(b.date) - new Date(a.date))
+											{[...semesterAssessments]
+												.sort(
+													(a, b) =>
+														new Date(b.assessmentDate) -
+														new Date(a.assessmentDate)
+												)
 												.map((assessment) => {
-													const percentage = calculatePercentage(
-														assessment.score,
-														assessment.total
-													);
+													const score = parseFloat(assessment.grade) || 0;
+													const total = parseFloat(assessment.points) || 0;
+													const percentage = calculatePercentage(score, total);
+
 													return (
-														<tr key={assessment.id}>
-															<td>{formatDate(assessment.date)}</td>
-															<td>{assessment.name}</td>
+														<tr key={assessment.assessmentId}>
+															<td>{formatDate(assessment.assessmentDate)}</td>
+															<td>{assessment.title}</td>
 															<td>
 																<span className="category-pill">
-																	{assessment.category}
+																	{assessment.type || "N/A"}
 																</span>
 															</td>
 															<td>
-																{assessment.score}/{assessment.total}
+																{score}/{total}
 															</td>
 															<td>
 																<div className="percentage-cell">
@@ -278,10 +275,7 @@ const InformationPage = () => {
 																				: "failing"
 																		}`}
 																		style={{
-																			width: `${
-																				(assessment.score / assessment.total) *
-																				100
-																			}%`,
+																			width: `${(score / total) * 100}%`,
 																		}}
 																	></div>
 																</div>

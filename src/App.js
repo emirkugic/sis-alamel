@@ -43,7 +43,6 @@ function App() {
 						}
 					>
 						<Route path="/" element={<Homepage />} />
-						{/* <InformationPage> will handle /student/:id */}
 						<Route path="/student/:id" element={<InformationPage />} />
 					</Route>
 
