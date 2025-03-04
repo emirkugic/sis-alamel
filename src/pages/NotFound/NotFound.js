@@ -21,11 +21,11 @@ const NotFound = () => {
 						</ul>
 					</div>
 
-					<div className="action-buttons">
+					{/* <div className="action-buttons">
 						<Link to="/" className="primary-button">
 							Go to Homepage
 						</Link>
-					</div>
+					</div> */}
 				</div>
 			</div>
 

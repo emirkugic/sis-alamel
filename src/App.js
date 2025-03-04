@@ -47,7 +47,7 @@ function App() {
 							</RequireAuth>
 						}
 					>
-						<Route path="/" element={<Homepage />} />
+						{/* <Route path="/" element={<Homepage />} /> */}
 						<Route path="/student/:id" element={<InformationPage />} />
 						<Route path="/attendance/:id" element={<AttendancePage />} />
 					</Route>
