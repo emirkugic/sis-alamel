@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 import "./InformationPage.css";
 import studentData from "./data.json";
 
 const InformationPage = () => {
+	const { id } = useParams(); // /student/:id
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [expandedSubjects, setExpandedSubjects] = useState([]);

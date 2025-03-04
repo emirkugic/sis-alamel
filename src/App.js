@@ -43,7 +43,8 @@ function App() {
 						}
 					>
 						<Route path="/" element={<Homepage />} />
-						<Route path="/student/tempId" element={<InformationPage />} />
+						{/* <InformationPage> will handle /student/:id */}
+						<Route path="/student/:id" element={<InformationPage />} />
 					</Route>
 
 					{/* 404 fallback */}

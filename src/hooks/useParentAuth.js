@@ -1,12 +1,16 @@
+import { jwtDecode } from "jwt-decode";
+
 import { useState } from "react";
 import authApi from "../api/authApi";
 
 const useParentAuth = () => {
-	// Initialize token from localStorage (if exists)
 	const [token, setToken] = useState(
 		() => localStorage.getItem("parentToken") || null
 	);
 	const [parent, setParent] = useState(null);
+	const [parentId, setParentId] = useState(
+		() => localStorage.getItem("parentId") || null
+	);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -14,9 +18,17 @@ const useParentAuth = () => {
 		try {
 			setLoading(true);
 			const data = await authApi.parentLogin(email, loginPassword);
+
 			setToken(data.token);
-			setParent({ token: data.token });
 			localStorage.setItem("parentToken", data.token);
+
+			const decoded = jwtDecode(data.token);
+			const userId = decoded.unique_name;
+			setParentId(userId);
+			localStorage.setItem("parentId", userId);
+
+			setParent({ token: data.token, id: userId });
+
 			return data;
 		} catch (err) {
 			setError(err);
@@ -29,11 +41,13 @@ const useParentAuth = () => {
 	const logoutParent = () => {
 		setParent(null);
 		setToken(null);
+		setParentId(null);
 		setError(null);
 		localStorage.removeItem("parentToken");
+		localStorage.removeItem("parentId");
 	};
 
-	return { parent, token, loginParent, logoutParent, loading, error };
+	return { parent, token, parentId, loginParent, logoutParent, loading, error };
 };
 
 export default useParentAuth;

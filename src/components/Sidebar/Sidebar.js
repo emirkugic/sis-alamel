@@ -3,27 +3,22 @@ import { useLocation } from "react-router-dom";
 import {
 	faBars,
 	faTimes,
-	faChartLine,
 	faSignOutAlt,
 	faHouse,
 	faPeopleGroup,
-	faBookOpen,
-	faCalendarAlt,
-	faBook,
-	faChalkboardTeacher,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SidebarButton from "../ui/SidebarButton/SidebarButton";
 import "./Sidebar.css";
-
-// Import the authentication context hook (adjust the path if needed)
 import { useParentAuthContext } from "../../contexts/ParentAuthContext";
+import parentApi from "../../api/parentApi";
 
 const DesktopSidebar = () => {
 	const location = useLocation();
-	const { logoutParent } = useParentAuthContext();
+	const { token, parentId, logoutParent } = useParentAuthContext();
+
 	const [activeItem, setActiveItem] = useState("");
-	const [myChildren, setMyChildren] = useState(["Emir", "Ege", "Ela"]);
+	const [myChildren, setMyChildren] = useState([]);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -33,9 +28,26 @@ const DesktopSidebar = () => {
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
+	useEffect(() => {
+		const fetchChildren = async () => {
+			if (!parentId || !token) return;
+			try {
+				const children = await parentApi.getChildrenByParentId(parentId, token);
+				const childLinks = children.map((child) => ({
+					title: `${child.firstName} ${child.lastName}`,
+					path: `/student/${child.id}`,
+				}));
+				setMyChildren(childLinks);
+			} catch (err) {
+				console.error("Error fetching children:", err);
+			}
+		};
+		fetchChildren();
+	}, [parentId, token]);
+
+	// Build the menu items
 	const menuItems = useMemo(() => {
 		const items = [];
-		// On mobile, include the Dashboard button
 		if (isMobile) {
 			items.push({
 				title: "Dashboard",
@@ -43,7 +55,6 @@ const DesktopSidebar = () => {
 				route: "/",
 			});
 		}
-		// Common items
 		items.push({
 			title: "Children",
 			icon: faPeopleGroup,
@@ -52,13 +63,13 @@ const DesktopSidebar = () => {
 		return items;
 	}, [isMobile, myChildren]);
 
+	// Track which item is active
 	useEffect(() => {
 		const activeMenuItem = menuItems.find((item) =>
 			Array.isArray(item.route)
 				? item.route.some((sub) => sub.path === location.pathname)
 				: item.route === location.pathname
 		);
-
 		if (activeMenuItem) {
 			setActiveItem(activeMenuItem.title);
 		}
@@ -69,10 +80,10 @@ const DesktopSidebar = () => {
 		if (window.innerWidth <= 768) {
 			setIsSidebarOpen(false);
 		}
+		// If route is an array, do nothing special unless you have a single sub-route
 	};
 
 	const handleLogout = () => {
-		// Call logout from context and redirect to /login
 		logoutParent();
 		window.location.href = "/login";
 	};
