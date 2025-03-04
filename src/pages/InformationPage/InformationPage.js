@@ -7,7 +7,7 @@ import { useParentAuthContext } from "../../contexts/ParentAuthContext";
 import "./InformationPage.css";
 
 const InformationPage = () => {
-	const { id } = useParams(); // /student/:id
+	const { id } = useParams();
 	const { token } = useParentAuthContext();
 	const { studentGrades, loading, error, fetchStudentGrades } =
 		useStudentGrades(token);
@@ -51,8 +51,11 @@ const InformationPage = () => {
 	};
 
 	const calculatePercentage = (score, total) => {
-		if (!total || total <= 0) return "0.0";
-		return ((score / total) * 100).toFixed(1);
+		if (!total || total <= 0) return "0";
+		const percentage = (score / total) * 100;
+		return Number.isInteger(percentage)
+			? percentage.toString()
+			: percentage.toFixed(1);
 	};
 
 	const isPassing = (percentage) => {
@@ -91,6 +94,21 @@ const InformationPage = () => {
 			categories[cat]++;
 		});
 		return categories;
+	};
+
+	// Calculate total points obtained and total points possible
+	const calculateTotalPoints = (assessments) => {
+		let totalObtained = 0;
+		let totalPossible = 0;
+
+		assessments.forEach((assessment) => {
+			const score = parseFloat(assessment.grade) || 0;
+			const total = parseFloat(assessment.points) || 0;
+			totalObtained += score;
+			totalPossible += total;
+		});
+
+		return { totalObtained, totalPossible };
 	};
 
 	if (loading) {
@@ -182,8 +200,12 @@ const InformationPage = () => {
 						}
 					});
 					const semesterAverage = semesterAssessments.length
-						? (sumPercent / semesterAssessments.length).toFixed(1)
-						: "0.0";
+						? Math.round(sumPercent / semesterAssessments.length).toString()
+						: "0";
+
+					// Calculate total points for this subject
+					const { totalObtained, totalPossible } =
+						calculateTotalPoints(semesterAssessments);
 
 					return (
 						<div className="subject-card" key={subject.subjectId}>
@@ -201,13 +223,24 @@ const InformationPage = () => {
 											isPassing(semesterAverage) ? "passing" : "failing"
 										}`}
 									>
-										{semesterAverage}%
+										<span className="percentage-text">{semesterAverage}%</span>
 									</div>
-									<div className="assessment-count">
-										{semesterAssessments.length}{" "}
-										{semesterAssessments.length === 1
-											? "assessment"
-											: "assessments"}
+									<div className="grade-details">
+										<div className="assessment-count">
+											{semesterAssessments.length}{" "}
+											{semesterAssessments.length === 1
+												? "assessment"
+												: "assessments"}
+										</div>
+										<div className="total-points">
+											{Number.isInteger(totalObtained)
+												? Math.floor(totalObtained)
+												: totalObtained.toFixed(1)}
+											/
+											{Number.isInteger(totalPossible)
+												? Math.floor(totalPossible)
+												: totalPossible.toFixed(1)}{" "}
+										</div>
 									</div>
 									<span className="expand-icon">
 										{expandedSubjects.includes(subject.subjectId) ? "▼" : "▶"}

@@ -213,7 +213,7 @@
 .grade-display {
 	font-size: 16px;
 	font-weight: bold;
-	min-width: 60px;
+	min-width: 70px;
 	height: 36px;
 	display: flex;
 	align-items: center;
@@ -222,7 +222,23 @@
 	color: white;
 }
 
+.percentage-text {
+	width: 100%;
+	text-align: center;
+}
+
+.grade-details {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
 .assessment-count {
+	font-size: 14px;
+	color: #6c757d;
+}
+
+.total-points {
 	font-size: 14px;
 	color: #6c757d;
 }
