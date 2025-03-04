@@ -6,7 +6,7 @@ import {
 	Outlet,
 	useLocation,
 } from "react-router-dom";
-import { LoginPage, Homepage, InformationPage } from "./pages";
+import { LoginPage, Homepage, InformationPage, NotFound } from "./pages";
 import { Sidebar } from "./components";
 import { ParentAuthProvider } from "./contexts/ParentAuthContext";
 import RequireAuth from "./components/RequireAuth";
@@ -47,7 +47,7 @@ function App() {
 					</Route>
 
 					{/* 404 fallback */}
-					<Route path="*" element={<h1>404 - Not Found</h1>} />
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Router>
 		</ParentAuthProvider>
